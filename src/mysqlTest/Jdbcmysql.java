@@ -16,7 +16,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Jdbcmysql extends HttpServlet{
+public class Jdbcmysql extends HttpServlet {
 
 	private Connection con = null; // Database objects
 	// 連接object
@@ -48,59 +48,65 @@ public class Jdbcmysql extends HttpServlet{
 		}
 
 	}
-	
+
 	ArrayList<String> employees = null;
-	public ArrayList<String> getEmployees(){
+
+	public ArrayList<String> getEmployees() {
 		String selectAll = "select name from EMPLOYEE";
-		ArrayList<String> resultArgs = new ArrayList<>();		
+		ArrayList<String> resultArgs = new ArrayList<>();
 		resultArgs.add("name");
-		this.MySQLexecuteQuery(selectAll, resultArgs,new MySQLCallBack() {
+		this.MySQLexecuteQuery(selectAll, resultArgs, new MySQLCallBack() {
 			@Override
 			public void onSuccess(Object returnObject) {
 				employees = (ArrayList<String>) returnObject;
 			}
+
 			@Override
 			public void onFail() {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
 		return employees;
 	}
+
 	ArrayList<String> leavetypes = null;
-	public ArrayList<String> getLeaveType(){
+
+	public ArrayList<String> getLeaveType() {
 		String selectAll = "select chinese_desc from leave_type";
-		ArrayList<String> resultArgs = new ArrayList<>();		
+		ArrayList<String> resultArgs = new ArrayList<>();
 		resultArgs.add("chinese_desc");
-		this.MySQLexecuteQuery(selectAll, resultArgs,new MySQLCallBack() {
+		this.MySQLexecuteQuery(selectAll, resultArgs, new MySQLCallBack() {
 			@Override
 			public void onSuccess(Object returnObject) {
 				leavetypes = (ArrayList<String>) returnObject;
 			}
+
 			@Override
 			public void onFail() {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
 		return leavetypes;
 	}
-	
-	HashMap<String,String> employeeMap = new HashMap<>();
-	public void getEmployeeMap(){
+
+	HashMap<String, String> employeeMap = new HashMap<>();
+
+	public void getEmployeeMap() {
 		String selectAll = "select * from EMPLOYEE";
 		try {
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectAll);
-			if (rs != null) {			
+			if (rs != null) {
 				while (rs.next()) {
 					String key = rs.getString("name");
 					String value = rs.getString("empl_id");
-					System.out.println("getEmployeeMap"+ key+value);
+					System.out.println("getEmployeeMap" + key + value);
 					employeeMap.put(key, value);
-					System.out.println("getEmployeeMap"+ employeeMap.get(key));
+					System.out.println("getEmployeeMap" + employeeMap.get(key));
 				}
 			}
 		} catch (SQLException e) {
@@ -109,31 +115,31 @@ public class Jdbcmysql extends HttpServlet{
 			Close();
 		}
 	}
-	HashMap<String,String> leaveStatMap = new HashMap<>();
-	public void getLeaveStatMap(){
+
+	HashMap<String, String> leaveStatMap = new HashMap<>();
+
+	public void getLeaveStatMap() {
 		System.out.println("getLeaveStatMap1");
 		String selectAll = "select * from leave_type";
 		try {
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectAll);
-			if (rs != null) {			
+			if (rs != null) {
 				while (rs.next()) {
 					String key = rs.getString("chinese_desc");
 					String value = rs.getString("leave_type_id");
-					System.out.println("getLeaveStatMap"+key+value);
+					System.out.println("getLeaveStatMap" + key + value);
 					leaveStatMap.put(key, value);
 				}
 			}
 		} catch (SQLException e) {
 			System.out.println("MySQL Exception :" + e.toString());
 		} finally {
-			Close();		
+			Close();
 		}
 	}
-	
-	
-	
-	private void MySQLexecuteUpdate(String mySQLSyntax, ArrayList<String> prepareArgs,MySQLCallBack callback) {
+
+	private void MySQLexecuteUpdate(String mySQLSyntax, ArrayList<String> prepareArgs, MySQLCallBack callback) {
 		try {
 			if (prepareArgs != null) {
 				pst = con.prepareStatement(mySQLSyntax);
@@ -155,13 +161,13 @@ public class Jdbcmysql extends HttpServlet{
 		}
 	}
 
-	private void MySQLexecuteQuery(String mySQLSyntax, ArrayList<String> resultArgs,MySQLCallBack callback) {
+	private void MySQLexecuteQuery(String mySQLSyntax, ArrayList<String> resultArgs, MySQLCallBack callback) {
 		ArrayList<String> results = new ArrayList<>();
 		boolean success = true;
 		try {
 			stat = con.createStatement();
 			rs = stat.executeQuery(mySQLSyntax);
-			if (rs != null) {			
+			if (rs != null) {
 				while (rs.next()) {
 					String result = "";
 					for (int i = 0; i < resultArgs.size(); i++) {
@@ -175,126 +181,148 @@ public class Jdbcmysql extends HttpServlet{
 			success = false;
 			System.out.println("MySQL Exception :" + e.toString());
 		} finally {
-			Close();		
+			Close();
 		}
-		if(success)callback.onSuccess(results);
-		else callback.onFail();
+		if (success)
+			callback.onSuccess(results);
+		else
+			callback.onFail();
 	}
-	
+
+	String leave_type_id,empl_id;
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-	throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("doPost1");
 		req.setCharacterEncoding("UTF-8");
 		resp.setCharacterEncoding("UTF-8");
-	    PrintWriter out = resp.getWriter();
-	    String tag = req.getParameter("tag");
+		PrintWriter out = resp.getWriter();
+		String tag = req.getParameter("tag");
 
-	    
-	    if(tag.equals("addEmp")) {
-	    	System.out.println("addEmp");    	
-	    	String name = req.getParameter("name");
-	    	String impl_id = req.getParameter("impl_id");
-	    	String department = req.getParameter("department");
-	    	String e_mail = req.getParameter("email");
-	    	String insertInto = "insert into EMPLOYEE(empl_id,name,department,email)"+
-	    			"values (\" " +impl_id+"\",\""+name+"\",\""+department+"\",\""+e_mail+"\")";
-	    	this.MySQLexecuteUpdate(insertInto,null,new MySQLCallBack() {
-					@Override
-					public void onSuccess(Object obj) {
-						req.setAttribute("addEmpStatus","yay");	    	
-				    	req.setAttribute("message", "success");
-				        try {
-							getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
-						} catch (ServletException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+		if (tag.equals("addEmp")) {
+			System.out.println("addEmp");
+			String name = req.getParameter("name");
+			String impl_id = req.getParameter("impl_id");
+			String department = req.getParameter("department");
+			String e_mail = req.getParameter("email");
+			String insertInto = "insert into EMPLOYEE(empl_id,name,department,email)" + "values (\" " + impl_id
+					+ "\",\"" + name + "\",\"" + department + "\",\"" + e_mail + "\")";
+			this.MySQLexecuteUpdate(insertInto, null, new MySQLCallBack() {
+				@Override
+				public void onSuccess(Object obj) {
+					req.setAttribute("addEmpStatus", "yay");
+					req.setAttribute("message", "success");
+					try {
+						getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
+					} catch (ServletException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-	
-					@Override
-					public void onFail() {
-						// TODO Auto-generated method stub
-						
-					}
+				}
+
+				@Override
+				public void onFail() {
+					// TODO Auto-generated method stub
+
+				}
 			});
-		}else if(tag.equals("getEmp")) {
-			System.out.println("getEmp");  
-	    	Jdbcmysql test = new Jdbcmysql();
+		} else if (tag.equals("getEmp")) {
+			System.out.println("getEmp");
 			String selectAll = "select * from EMPLOYEE";
 			ArrayList<String> resultArgs = new ArrayList<>();
 			resultArgs.add("empl_id");
 			resultArgs.add("name");
 			resultArgs.add("department");
 			resultArgs.add("email");
-			this.MySQLexecuteQuery(selectAll,resultArgs,new MySQLCallBack() {
-					@Override
-					public void onSuccess(Object obj) {
-						req.setAttribute("getEmpStatus","yay");	    	
-				    	req.setAttribute("message",(ArrayList<String>) obj);
-				    	System.out.println(((ArrayList<String>) obj).get(0));
-				        try {
-							getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
-						} catch (ServletException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+			this.MySQLexecuteQuery(selectAll, resultArgs, new MySQLCallBack() {
+				@Override
+				public void onSuccess(Object obj) {
+					req.setAttribute("getEmpStatus", "yay");
+					req.setAttribute("message", (ArrayList<String>) obj);
+					System.out.println(((ArrayList<String>) obj).get(0));
+					try {
+						getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
+					} catch (ServletException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-	
-					@Override
-					public void onFail() {
-						// TODO Auto-generated method stub
-					}
-			});
-	    }else if(tag.equals("sentLeave")) {
-	    	System.out.println("sentLeave");    	
-	    	getEmployeeMap();
-			getLeaveStatMap();
-			String name = req.getParameter("employees");
-	    	String chinese_desc = req.getParameter("leavestats");
-	    	System.out.println(name+" "+chinese_desc);
-	    	name = employeeMap.get(name);
-	    	chinese_desc = leaveStatMap.get(chinese_desc);
-	    	System.out.println(employeeMap.size()+" "+leaveStatMap.size());
-	    	System.out.println(name+" "+chinese_desc);
-		
-	    
-//	    	String insertInto = "insert into EMPLOYEE(empl_id,name,department,email)"+
-//	    			"values (\" " +impl_id+"\",\""+name+"\",\""+department+"\",\""+e_mail+"\")";
-//	    	this.MySQLexecuteUpdate(insertInto,null,new MySQLCallBack() {
-//					@Override
-//					public void onSuccess(Object obj) {
-//						req.setAttribute("addEmpStatus","yay");	    	
-//				    	req.setAttribute("message", "success");
-//				        try {
-//							getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
-//						} catch (ServletException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						} catch (IOException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//					}
-//	
-//					@Override
-//					public void onFail() {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//			});
-	    }
-//	    out.println("</body>");	
-//	    out.println("</html>");
-	    out.close();
-	} 
+				}
 
+				@Override
+				public void onFail() {
+					// TODO Auto-generated method stub
+				}
+			});
+		} else if (tag.equals("sentLeave")) {
+			System.out.println("sentLeave");
+			// getEmployeeMap();
+			// getLeaveStatMap();
+			String name = req.getParameter("employees");
+			String chinese_desc = req.getParameter("leavestats");
+			String start_dt = req.getParameter("start_dt");
+			String end_dt = req.getParameter("end_dt");
+			// name = employeeMap.get(name);
+			// chinese_desc = leaveStatMap.get(chinese_desc);
+			// System.out.println(employeeMap.size()+" "+leaveStatMap.size());
+			System.out.println(name + " " + chinese_desc);
+
+			String select_leave_type_id = "select leave_type_id from Leave_type where chinese_desc = \"" + chinese_desc
+					+ "\"";
+			ArrayList<String> resultArgs = new ArrayList<>();
+			resultArgs.add("leave_type_id");
+			this.MySQLexecuteQuery(select_leave_type_id, resultArgs, new MySQLCallBack() {
+				@Override
+				public void onSuccess(Object obj) {
+					leave_type_id = ((ArrayList<String>) obj).get(0);
+					System.out.println(((ArrayList<String>) obj).get(0));
+
+					String select_empl_id = "select empl_id from employee where name = \"" + name + "\"";
+					ArrayList<String> resultArgs = new ArrayList<>();
+					resultArgs.add("empl_id");
+					Jdbcmysql.this.MySQLexecuteQuery(select_empl_id, resultArgs, new MySQLCallBack() {
+						@Override
+						public void onSuccess(Object obj) {
+							empl_id = ((ArrayList<String>) obj).get(0);
+							System.out.println(((ArrayList<String>) obj).get(0));
+							String insert_into_leave_stat = "insert into leave_stat(empl_id,leave_type_id,start_dt,end_dt)" + "values (\"" + empl_id
+									+ "\",\"" + leave_type_id + "\",\"" + start_dt + "\",\"" + end_dt + "\")";
+							Jdbcmysql.this.MySQLexecuteUpdate(insert_into_leave_stat, null, new MySQLCallBack() {
+								@Override
+								public void onSuccess(Object obj) {
+									req.setAttribute("sentLeave", "yay");
+									req.setAttribute("message", "success");
+									try {
+										getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
+									} catch (ServletException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+								@Override
+								public void onFail() {
+								}
+							});
+						}
+						@Override
+						public void onFail() {
+						}
+					});
+				}
+				@Override
+				public void onFail() {
+				}
+			});
+		}
+		out.close();
+	}
 
 	// 完整使用完資料庫後,記得要關閉所有Object
 	// 否則在等待Timeout時,可能會有Connection poor的狀況
@@ -320,10 +348,10 @@ public class Jdbcmysql extends HttpServlet{
 	public static void main(String[] args) {
 
 		Jdbcmysql test = new Jdbcmysql();
-//		String selectAll = "select * from EMPLOYEE";
-//		ArrayList<String> resultArgs = new ArrayList<>();
-//		resultArgs.add("empl_id");
-//		resultArgs.add("name");
+		// String selectAll = "select * from EMPLOYEE";
+		// ArrayList<String> resultArgs = new ArrayList<>();
+		// resultArgs.add("empl_id");
+		// resultArgs.add("name");
 		// resultArgs.add("department");
 		// resultArgs.add("email");
 		// test.MySQLexecuteQuery(selectAll, resultArgs);
@@ -331,9 +359,10 @@ public class Jdbcmysql extends HttpServlet{
 		// values (\"1\",\"2\",\"3\",\"4\")";
 		// test.MySQLexecuteUpdate(insertInto,null);
 	}
-	
+
 	public abstract class MySQLCallBack {
 		public abstract void onSuccess(Object returnObject);
+
 		public abstract void onFail();
 	}
 }

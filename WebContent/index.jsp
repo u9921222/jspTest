@@ -61,10 +61,19 @@
 			<%
 				}
 			%>
-		</select> <br /> 
+		</select>
+		從: <input type="text" name="start_dt" /> 到： <input type="text"
+			name="end_dt" />
+		 <br /> 
 		<input type="submit" value="獲得" /> 
 		<input type="hidden"
 			name="tag" value="sentLeave">
 	</form>
+	<%
+		if (request.getAttribute("sentLeave") != null) {
+			String result = (String) request.getAttribute("message");
+			out.println("<h1>" + result + "<br>" + "</h1>");
+		}
+	%>
 </body>
 </html>
