@@ -3,15 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-
-	<servlet>
-		<servlet-name>Jdbcmysql</servlet-name>
-		<servlet-class>mysqlTest.Jdbcmysql</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>Jdbcmysql</servlet-name>
-		<url-pattern>/jdbcmysql</url-pattern>
-	</servlet-mapping>
+	
+	<resource-ref>
+        <description>MySQL DB Connection Pool</description>
+        <res-ref-name>jdbc/javabase</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+    </resource-ref>
 
 </web-app>
