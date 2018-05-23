@@ -14,6 +14,7 @@
 	href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
     
 <script>
 	$(function() {
@@ -39,30 +40,50 @@
         alert('javaScriptTest');
     }
 </script>
+<!--
+<link rel="stylesheet" type="text/css" media="screen" href="https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/css/ui.jqgrid.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/plugins/jquery.searchFilter.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.src.js" type="text/javascript" ></script>
+ -->
+ 
+<link href="css/ui.jqgrid.css" rel="stylesheet" type="text/css" media="screen"  />
+<link href="js/plugins/searchFilter.css" rel="stylesheet" type="text/css" media="screen"  />
+<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+<script src="js/jquery.jqGrid.src.js" type="text/javascript"></script>
+<script src="js/grid.loader.js" type="text/javascript"></script>
 <script type="text/javascript"> 
 jQuery().ready(function (){
-jQuery("#list1").jqGrid({
-    url:'server.php?q=1',
-    datatype: "xml",
-    colNames:['Inv No','Date', 'Client', 'Amount','Tax','Total','Notes'],
-    colModel:[
-        {name:'id',index:'id', width:75},
-        {name:'invdate',index:'invdate', width:90},
-        {name:'name',index:'name', width:100},
-        {name:'amount',index:'amount', width:80, align:"right"},
-        {name:'tax',index:'tax', width:80, align:"right"},      
-        {name:'total',index:'total', width:80,align:"right"},       
-        {name:'note',index:'note', width:150, sortable:false}       
-    ],
-    rowNum:10,
-    autowidth: true,
-    rowList:[10,20,30],
-    pager: jQuery('#pager1'),
-    sortname: 'id',
-    viewrecords: true,
-    sortorder: "desc",
-    caption:"XML Example"
-}).navGrid('#pager1',{edit:false,add:false,del:false});                 
+	jQuery("#list1").jqGrid({
+	    datatype: "local",
+	    height: 250,
+	    colNames:['Inv No','Date', 'Client', 'Amount','Tax','Total','Notes'],
+	    colModel:[
+	        {name:'id',index:'id', width:60, sorttype:"int"},
+	        {name:'invdate',index:'invdate', width:90, sorttype:"date"},
+	        {name:'name',index:'name', width:100},
+	        {name:'amount',index:'amount', width:80, align:"right",sorttype:"float"},
+	        {name:'tax',index:'tax', width:80, align:"right",sorttype:"float"},     
+	        {name:'total',index:'total', width:80,align:"right",sorttype:"float"},      
+	        {name:'note',index:'note', width:150, sortable:false}       
+	    ],
+	    multiselect: true,
+	    caption: "Manipulating Array Data"
+	});
+	var mydata = [
+	        {id:"1",invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"},
+	        {id:"2",invdate:"2007-10-02",name:"test2",note:"note2",amount:"300.00",tax:"20.00",total:"320.00"},
+	        {id:"3",invdate:"2007-09-01",name:"test3",note:"note3",amount:"400.00",tax:"30.00",total:"430.00"},
+	        {id:"4",invdate:"2007-10-04",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"},
+	        {id:"5",invdate:"2007-10-05",name:"test2",note:"note2",amount:"300.00",tax:"20.00",total:"320.00"},
+	        {id:"6",invdate:"2007-09-06",name:"test3",note:"note3",amount:"400.00",tax:"30.00",total:"430.00"},
+	        {id:"7",invdate:"2007-10-04",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"},
+	        {id:"8",invdate:"2007-10-03",name:"test2",note:"note2",amount:"300.00",tax:"20.00",total:"320.00"},
+	        {id:"9",invdate:"2007-09-01",name:"test3",note:"note3",amount:"400.00",tax:"30.00",total:"430.00"}
+	        ];
+	for(var i=0;i<=mydata.length;i++)
+	    jQuery("#list1").jqGrid('addRowData',i+1,mydata[i]);
+});          
 </script> 
 
 <style>
@@ -71,12 +92,6 @@ jQuery("#list1").jqGrid({
 }
 </style>
 
-
-<link rel="stylesheet" type="text/css" media="screen" href="css/ui.jqgrid.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="js/src/plugins/jquery.searchFilter.css" />
-<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="js/jquery.jqGrid.src.js"></script>
-<script src="js/src/grid.loader.js" type="text/javascript"></script>
 
 </head>
 <body>
